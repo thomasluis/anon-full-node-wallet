@@ -44,7 +44,8 @@ public class BTCPWalletUI extends JFrame {
     private AddressesPanel addresses;
     private SendCashPanel sendPanel;
     private AddressBookPanel addressBookPanel;
-    private MessagingPanel messagingPanel;
+    private MasternodePanel masternodePanel;
+    // private MessagingPanel messagingPanel;
 
 
     private JMenuItem langEnglish;
@@ -145,9 +146,13 @@ public class BTCPWalletUI extends JFrame {
         tabs.addTab(LOCAL_MSG_TAB_ADDRESS_BOOK,
             new ImageIcon(cl.getResource(IMG_TAB_ADDRESS_BOOK)),
             addressBookPanel = new AddressBookPanel(sendPanel, tabs));
-        tabs.addTab(LOCAL_MSTRNDE_TAB_MSTRNDE,
-            new ImageIcon(cl.getResource(IMG_TAB_MSG)),
-            messagingPanel = new MessagingPanel(this, sendPanel, tabs, clientCaller, errorReporter));
+        // tabs.addTab(LOCAL_MSTRNDE_TAB_MSTRNDE,
+            // new ImageIcon(cl.getResource(IMG_TAB_MSG))
+            // messagingPanel = new MessagingPanel(this, sendPanel, tabs, clientCaller, errorReporter)
+            // );
+            tabs.addTab(LOCAL_MSTRNDE_TAB_MSTRNDE,
+            // new ImageIcon(cl.getResource(IMG_TAB_ADDRESS_BOOK)),
+            masternodePanel = new MasternodePanel(sendPanel, tabs));
         contentPane.add(tabs);
 
         this.walletOps = new WalletOperations(
@@ -244,25 +249,25 @@ public class BTCPWalletUI extends JFrame {
             e -> BTCPWalletUI.this.walletOps.importSinglePrivateKey()
         );
 
-        menuItemOwnIdentity.addActionListener(
-            e -> BTCPWalletUI.this.messagingPanel.openOwnIdentityDialog()
-        );
+        // menuItemOwnIdentity.addActionListener(
+            // e -> BTCPWalletUI.this.messagingPanel.openOwnIdentityDialog()
+        // );
 
-        menuItemExportOwnIdentity.addActionListener(
-            e -> BTCPWalletUI.this.messagingPanel.exportOwnIdentity()
-        );
+        // menuItemExportOwnIdentity.addActionListener(
+            // e -> BTCPWalletUI.this.messagingPanel.exportOwnIdentity()
+        // );
 
-        menuItemImportContactIdentity.addActionListener(
-            e -> BTCPWalletUI.this.messagingPanel.importContactIdentity()
-        );
+        // menuItemImportContactIdentity.addActionListener(
+            // e -> BTCPWalletUI.this.messagingPanel.importContactIdentity()
+        // );
 
-        menuItemRemoveContactIdentity.addActionListener(
-            e -> BTCPWalletUI.this.messagingPanel.removeSelectedContact()
-        );
+        // menuItemRemoveContactIdentity.addActionListener(
+            // e -> BTCPWalletUI.this.messagingPanel.removeSelectedContact()
+        // );
 
-        menuItemMessagingOptions.addActionListener(
-            e -> BTCPWalletUI.this.messagingPanel.openOptionsDialog()
-        );
+        // menuItemMessagingOptions.addActionListener(
+            // e -> BTCPWalletUI.this.messagingPanel.openOptionsDialog()
+        // );
 
         langEnglish.addActionListener(
             e -> {
@@ -346,7 +351,7 @@ public class BTCPWalletUI extends JFrame {
             e -> {
                 JTabbedPane tabs = (JTabbedPane) e.getSource();
                 if (tabs.getSelectedIndex() == 4) {
-                    BTCPWalletUI.this.messagingPanel.tabSelected();
+                    // BTCPWalletUI.this.messagingPanel.tabSelected();
                 }
             }
         );
@@ -361,7 +366,7 @@ public class BTCPWalletUI extends JFrame {
         this.dashboard.stopThreadsAndTimers();
         this.addresses.stopThreadsAndTimers();
         this.sendPanel.stopThreadsAndTimers();
-        this.messagingPanel.stopThreadsAndTimers();
+        // this.messagingPanel.stopThreadsAndTimers();
 
         BTCPWalletUI.this.setVisible(false);
         BTCPWalletUI.this.dispose();
