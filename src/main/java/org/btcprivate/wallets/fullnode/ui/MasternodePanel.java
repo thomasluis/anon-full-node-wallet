@@ -32,6 +32,7 @@ public class MasternodePanel extends JPanel {
 
     private static final String LOCAL_MENU_NEW_CONTACT = Util.local("LOCAL_MENU_NEW_CONTACT");
     private static final String LOCAL_MENU_SEND_BTCP = Util.local("LOCAL_MENU_SEND_BTCP");
+    private static final String MASTERNODE_LIST = Util.local("MASTERNODE_LIST");    
     private static final String LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD = Util.local("LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD");
     private static final String LOCAL_MENU_DELETE_CONTACT = Util.local("LOCAL_MENU_DELETE_CONTACT");
     private static final String LOCAL_MENU_COLUMN_NAME = Util.local("LOCAL_MENU_COLUMN_NAME");
@@ -64,44 +65,17 @@ public class MasternodePanel extends JPanel {
 
     private JTable table;
 
-    private JButton sendCashButton, deleteContactButton, copyToClipboardButton;
+    private JButton sendCashButton, deleteContactButton, copyToClipboardButton, getMasterNodeList;
 
     private final SendCashPanel sendCashPanel;
     private final JTabbedPane tabs;
 
-    private JPanel buildButtonsPanel() {
-        JPanel panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
-
-        JButton newContactButton = new JButton(LOCAL_MENU_NEW_CONTACT);
-        newContactButton.addActionListener(new NewContactActionListener());
-        panel.add(newContactButton);
-
-        sendCashButton = new JButton(LOCAL_MENU_SEND_BTCP);
-        sendCashButton.addActionListener(new SendCashActionListener());
-        sendCashButton.setEnabled(false);
-        panel.add(sendCashButton);
-
-        copyToClipboardButton = new JButton(LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD);
-        copyToClipboardButton.setEnabled(false);
-        copyToClipboardButton.addActionListener(new CopyToClipboardActionListener());
-        panel.add(copyToClipboardButton);
-
-        deleteContactButton = new JButton(LOCAL_MENU_DELETE_CONTACT);
-        deleteContactButton.setEnabled(false);
-        deleteContactButton.addActionListener(new DeleteAddressActionListener());
-        panel.add(deleteContactButton);
-
-        return panel;
-    }
-
     private JScrollPane buildTablePanel() {
         table = new JTable(new AddressBookTableModel(), new DefaultTableColumnModel());
-        TableColumn nameColumn = new TableColumn(0);
+        TableColumn masternodeColumn = new TableColumn(0);
         TableColumn addressColumn = new TableColumn(1);
-        table.addColumn(nameColumn);
-        table.addColumn(addressColumn);
+        table.addColumn(masternodeColumn);
+        // table.addColumn(addressColumn);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // one at a time
         table.getSelectionModel().addListSelectionListener(new AddressListSelectionListener());
         table.addMouseListener(new AddressMouseListener());
@@ -115,13 +89,38 @@ public class MasternodePanel extends JPanel {
         return scrollPane;
     }
 
+    private JPanel buildButtonsPanel() {
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
+
+        // JButton newContactButton = new JButton(LOCAL_MENU_NEW_CONTACT);
+        // newContactButton.addActionListener(new NewContactActionListener());
+        // panel.add(newContactButton);
+
+        getMasterNodeList = new JButton(MASTERNODE_LIST);
+        panel.add(getMasterNodeList);
+
+        // copyToClipboardButton = new JButton(LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD);
+        // copyToClipboardButton.setEnabled(false);
+        // copyToClipboardButton.addActionListener(new CopyToClipboardActionListener());
+        // panel.add(copyToClipboardButton);
+
+        // deleteContactButton = new JButton(LOCAL_MENU_DELETE_CONTACT);
+        // deleteContactButton.setEnabled(false);
+        // deleteContactButton.addActionListener(new DeleteAddressActionListener());
+        // panel.add(deleteContactButton);
+
+        return panel;
+    }
+
     public MasternodePanel(SendCashPanel sendCashPanel, JTabbedPane tabs) throws IOException {
         this.sendCashPanel = sendCashPanel;
         this.tabs = tabs;
         BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(boxLayout);
-        add(buildTablePanel());
         add(buildButtonsPanel());
+        add(buildTablePanel());
 
         loadEntriesFromDisk();
     }
