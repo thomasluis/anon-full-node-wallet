@@ -70,7 +70,7 @@ public class BTCPWalletUI extends JFrame {
     private static final String LOCAL_MENU_WALLET = Util.local("LOCAL_MENU_WALLET");
     private static final String LOCAL_MENU_VIEW_PK = Util.local("LOCAL_MENU_VIEW_PK");
     private static final String LOCAL_MENU_IMPORT_PK = Util.local("LOCAL_MENU_IMPORT_PK");
-    private static final String LOCAL_MENU_MSG = Util.local("LOCAL_MENU_MSG");
+    private static final String LOCAL_MENU_MSTRNDE = Util.local("LOCAL_MENU_MSTRNDE");
     private static final String LOCAL_MENU_MY_ID = Util.local("LOCAL_MENU_MY_ID");
     private static final String LOCAL_MENU_EXPORT_ID = Util.local("LOCAL_MENU_EXPORT_ID");
     private static final String LOCAL_MENU_IMPORT_CONTACT = Util.local("LOCAL_MENU_IMPORT_CONTACT");
@@ -188,7 +188,7 @@ public class BTCPWalletUI extends JFrame {
 
         mb.add(wallet);
 
-        JMenu messaging = new JMenu(LOCAL_MENU_MSG);
+        JMenu messaging = new JMenu(LOCAL_MENU_MSTRNDE);
         messaging.setMnemonic(KeyEvent.VK_S);
         messaging.add(menuItemOwnIdentity = new JMenuItem(LOCAL_MENU_MY_ID, KeyEvent.VK_D));
         menuItemOwnIdentity.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, accelaratorKeyMask));
