@@ -9,6 +9,7 @@ import org.btcprivate.wallets.fullnode.util.Util;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -29,12 +30,12 @@ public class BTCPClientCaller {
     public static class Masternode {
         // status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP
         public String mnStatus;
-        public int mnProtocol;
+        public String mnProtocol;
         public String mnPayee;
-        public Date mnLastSeen;
-        public int mnActiveSeconds;
-        public Date mnLastPaidTime;
-        public int mnLastPaidBlock;
+        public String mnLastSeen;
+        public String mnActiveSeconds;
+        public String mnLastPaidTime;
+        public String mnLastPaidBlock;
         public String mnIP;
 
     }
@@ -178,20 +179,37 @@ public class BTCPClientCaller {
     }
 
 
-    public synchronized String getMasternodeList() throws WalletCallException, IOException, InterruptedException {
-        Masternode mNode = new Masternode();
+    public synchronized String[] getMasternodeList() throws WalletCallException, IOException, InterruptedException {
+    
+        JsonObject objResponse = this.executeCommandAndGetJsonObject("masternodelist", "full");
+    
+        Map<String, String> map = new HashMap<String, String>();
+        for (String name : objResponse.names()) {
+            this.decomposeJSONValue(name, objResponse.get(name), map);
+        }
+    
+        String[] finalArr = new String[map.size()];
+        int arInc = 0;
+        for(String memberName : map.keySet()){
+            String[] splitResponse = String.valueOf(objResponse.get(memberName)).replace("\"","").split("\\s+");
+            String splitObject = "{" + memberName + ": [";
+            int inc = 0;
+            for(String valueInString: splitResponse) {
+                if(valueInString.length() == 0){
+                    // dont log the empty variable.
+                }else if(inc == 1){
+                    splitObject+= valueInString;
+                }else{
+                    splitObject+= ", " + valueInString;
+                }
+                inc++;
+            }
+            splitObject+= "]}";
+            finalArr[arInc] = splitObject;
+            arInc++;
+        }
 
-        JsonObject objResponse = this.executeCommandAndGetJsonObject("masternodelist", null);
-
-        Log.info("objResponse" + objResponse.toString());
-        // objResponse = this.executeCommandAndGetJsonObject("z_gettotalbalance", "0");
-
-        // balance.transparentUnconfirmedBalance = Double.valueOf(objResponse.getString("transparent", "-1"));
-        // balance.privateUnconfirmedBalance = Double.valueOf(objResponse.getString("private", "-1"));
-        // balance.totalUnconfirmedBalance = Double.valueOf(objResponse.getString("total", "-1"));
-
-        String dog = "dog";
-        return dog;
+        return finalArr;
     }
 
 
