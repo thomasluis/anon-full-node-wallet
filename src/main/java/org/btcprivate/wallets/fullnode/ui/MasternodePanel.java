@@ -4,6 +4,8 @@ import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller;
 import org.btcprivate.wallets.fullnode.util.Log;
 import org.btcprivate.wallets.fullnode.util.OSUtil;
 import org.btcprivate.wallets.fullnode.util.Util;
+import org.btcprivate.wallets.fullnode.daemon.BTCPInstallationObserver;
+import org.btcprivate.wallets.fullnode.daemon.BTCPInstallationObserver.DaemonInfo;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -29,6 +31,8 @@ import java.util.Set;
 public class MasternodePanel extends JPanel {
 
     BTCPClientCaller clientCaller;
+    private JFrame parentFrame;
+    private BTCPInstallationObserver installationObserver;
     private static final String ADDRESS_BOOK_FILE = "addressBook.csv";
 
     private static final String LOCAL_MENU_NEW_CONTACT = Util.local("LOCAL_MENU_NEW_CONTACT");
@@ -48,6 +52,17 @@ public class MasternodePanel extends JPanel {
     private static final String LOCAL_MSG_DELETE_CONJUGATED = Util.local("LOCAL_MSG_DELETE_CONJUGATED");
     private static final String LOCAL_MSG_FROM_CONTACTS = Util.local("LOCAL_MSG_FROM_CONTACTS");
     private static final String LOCAL_MSG_DELETE_CONTACT = Util.local("LOCAL_MSG_DELETE_CONTACT");
+
+    private static final String LOCAL_MSG_MSTRNDE_STATUS  = Util.local("LOCAL_MSG_MSTRNDE_STATUS");
+    private static final String LOCAL_MSG_MSTRNDE_PROTOCOL = Util.local("LOCAL_MSG_MSTRNDE_PROTOCOL");
+    private static final String LOCAL_MSG_MSTRNDE_PAYEE = Util.local("LOCAL_MSG_MSTRNDE_PAYEE");
+    private static final String LOCAL_MSG_MSTRNDE_LASTSEEN = Util.local("LOCAL_MSG_MSTRNDE_LASTSEEN");
+    private static final String LOCAL_MSG_MSTRNDE_ACTIVETIME = Util.local("LOCAL_MSG_MSTRNDE_ACTIVETIME");
+    private static final String LOCAL_MSG_MSTRNDE_LASTPAIDTIME = Util.local("LOCAL_MSG_MSTRNDE_LASTPAIDTIME");
+    private static final String LOCAL_MSG_MSTRNDE_LASTBLOCK = Util.local("LOCAL_MSG_MSTRNDE_LASTBLOCK");
+    private static final String LOCAL_MSG_MSTRNDE_IP = Util.local("LOCAL_MSG_MSTRNDE_IP");
+    
+    
 
     private static class AddressBookEntry {
         final String name, address;
@@ -70,24 +85,7 @@ public class MasternodePanel extends JPanel {
     // // private final SendCashPanel sendCashPanel;
     private final JTabbedPane tabs;
 
-    private JScrollPane buildTablePanel() {
-        table = new JTable(new AddressBookTableModel(), new DefaultTableColumnModel());
-        TableColumn masternodeColumn = new TableColumn(0);
-        TableColumn addressColumn = new TableColumn(1);
-        table.addColumn(masternodeColumn);
-        // table.addColumn(addressColumn);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // one at a time
-        table.getSelectionModel().addListSelectionListener(new AddressListSelectionListener());
-        table.addMouseListener(new AddressMouseListener());
 
-        // TODO: isolate in utility
-        TableCellRenderer renderer = table.getCellRenderer(0, 0);
-        Component comp = renderer.getTableCellRendererComponent(table, "123", false, false, 0, 0);
-        table.setRowHeight(new Double(comp.getPreferredSize().getHeight()).intValue() + 2);
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        return scrollPane;
-    }
 
     private JPanel buildButtonsPanel() {
         JPanel panel = new JPanel();
@@ -115,6 +113,60 @@ public class MasternodePanel extends JPanel {
         return panel;
     }
 
+    // private JScrollPane buildTablePanel() {
+    //     table = new JTable(new AddressBookTableModel(), new DefaultTableColumnModel());
+    //     TableColumn masternodeColumn = new TableColumn(0);
+    //     TableColumn addressColumn = new TableColumn(1);
+    //     table.addColumn(masternodeColumn);
+    //     // table.addColumn(addressColumn);
+    //     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // one at a time
+    //     table.getSelectionModel().addListSelectionListener(new AddressListSelectionListener());
+    //     table.addMouseListener(new AddressMouseListener());
+
+    //     // TODO: isolate in utility
+    //     TableCellRenderer renderer = table.getCellRenderer(0, 0);
+    //     Component comp = renderer.getTableCellRendererComponent(table, "123", false, false, 0, 0);
+    //     table.setRowHeight(new Double(comp.getPreferredSize().getHeight()).intValue() + 2);
+
+    //     JScrollPane scrollPane = new JScrollPane(table);
+    //     return scrollPane;
+    // }
+
+    private JScrollPane buildTablePanel() throws Exception {
+        // table = new JTable(new AddressBookTableModel(), new DefaultTableColumnModel());
+        TableColumn masternodeColumn = new TableColumn(0);
+        TableColumn yo = new TableColumn(0);
+        TableColumn dude = new TableColumn(1);
+        table.addColumn(yo);
+        String rowData[][] = MasternodePanel.this.clientCaller.getMasternodeList();
+
+
+
+
+        String columnNames[] = {LOCAL_MSG_MSTRNDE_STATUS,LOCAL_MSG_MSTRNDE_PROTOCOL,LOCAL_MSG_MSTRNDE_PAYEE,LOCAL_MSG_MSTRNDE_LASTSEEN, LOCAL_MSG_MSTRNDE_ACTIVETIME, LOCAL_MSG_MSTRNDE_LASTPAIDTIME, LOCAL_MSG_MSTRNDE_LASTBLOCK, LOCAL_MSG_MSTRNDE_IP};
+
+        JTable table = new MasternodeTable(rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
+    //     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // one at a time
+    //     table.getSelectionModel().addListSelectionListener(new AddressListSelectionListener());
+    //     table.addMouseListener(new AddressMouseListener());
+        // table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        // table.getColumnModel().getColumn(0).setPreferredWidth(150);
+        // table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        // table.getColumnModel().getColumn(2).setPreferredWidth(150);
+        // table.getColumnModel().getColumn(3).setPreferredWidth(150);
+        // table.getColumnModel().getColumn(4).setPreferredWidth(150);
+        // table.getColumnModel().getColumn(5).setPreferredWidth(150);
+        // table.getColumnModel().getColumn(6).setPreferredWidth(150);
+        // table.getColumnModel().getColumn(7).setPreferredWidth(150);
+
+        TableCellRenderer renderer = table.getCellRenderer(0, 0);
+        Component comp = renderer.getTableCellRendererComponent(table, "123", false, false, 0, 0);
+        table.setRowHeight(new Double(comp.getPreferredSize().getHeight()).intValue() + 2);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        return scrollPane;
+    }
+
     public MasternodePanel(BTCPClientCaller clientCaller, JTabbedPane tabs) throws IOException {
         // // this.sendCashPanel = sendCashPanel;
         this.clientCaller = clientCaller;
@@ -122,10 +174,18 @@ public class MasternodePanel extends JPanel {
         BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(boxLayout);
         add(buildButtonsPanel());
-        add(buildTablePanel());
-
+        
+        // String[] yo = MasternodePanel.this.clientCaller.getMasternodeList();
+        try{
+            // add(buildTablePanel(MasternodePanel.this.clientCaller.getMasternodeList()));
+            add(buildTablePanel());
+        }catch(Exception p){
+            System.out.println(p);
+        }
         loadEntriesFromDisk();
     }
+
+
 
     private void loadEntriesFromDisk() throws IOException {
         File addressBookFile = new File(OSUtil.getSettingsDirectory(), ADDRESS_BOOK_FILE);
@@ -198,7 +258,7 @@ public class MasternodePanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
 
             try{
-                String response = MasternodePanel.this.clientCaller.getMasternodeList();
+                String[][] response = MasternodePanel.this.clientCaller.getMasternodeList();
             } catch(Exception ex){
                 System.out.println(ex);
             }
@@ -304,51 +364,51 @@ public class MasternodePanel extends JPanel {
 
     }
 
-    private class AddressBookTableModel extends AbstractTableModel {
+    // private class AddressBookTableModel extends AbstractTableModel {
 
-        @Override
-        public int getRowCount() {
-            return entries.size();
-        }
+    //     @Override
+    //     public int getRowCount() {
+    //         return entries.size();
+    //     }
 
-        @Override
-        public int getColumnCount() {
-            return 2;
-        }
+    //     @Override
+    //     public int getColumnCount() {
+    //         return 2;
+    //     }
 
-        @Override
-        public String getColumnName(int columnIndex) {
-            switch (columnIndex) {
-            case 0:
-                return LOCAL_MENU_COLUMN_NAME;
-            case 1:
-                return LOCAL_MENU_COLUMN_ADDRESS;
-            default:
-                throw new IllegalArgumentException("Invalid Column: " + columnIndex);
-            }
-        }
+    //     @Override
+    //     public String getColumnName(int columnIndex) {
+    //         switch (columnIndex) {
+    //         case 0:
+    //             return LOCAL_MENU_COLUMN_NAME;
+    //         case 1:
+    //             return LOCAL_MENU_COLUMN_ADDRESS;
+    //         default:
+    //             throw new IllegalArgumentException("Invalid Column: " + columnIndex);
+    //         }
+    //     }
 
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
+    //     @Override
+    //     public Class<?> getColumnClass(int columnIndex) {
+    //         return String.class;
+    //     }
 
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
-        }
+    //     @Override
+    //     public boolean isCellEditable(int rowIndex, int columnIndex) {
+    //         return false;
+    //     }
 
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            AddressBookEntry entry = entries.get(rowIndex);
-            switch (columnIndex) {
-            case 0:
-                return entry.name;
-            case 1:
-                return entry.address;
-            default:
-                throw new IllegalArgumentException("Bad Column: " + columnIndex);
-            }
-        }
-    }
+    //     @Override
+    //     public Object getValueAt(int rowIndex, int columnIndex) {
+    //         AddressBookEntry entry = entries.get(rowIndex);
+    //         switch (columnIndex) {
+    //         case 0:
+    //             return entry.name;
+    //         case 1:
+    //             return entry.address;
+    //         default:
+    //             throw new IllegalArgumentException("Bad Column: " + columnIndex);
+    //         }
+    //     }
+    // }
 }

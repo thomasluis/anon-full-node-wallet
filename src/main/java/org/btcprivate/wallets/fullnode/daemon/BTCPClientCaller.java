@@ -179,7 +179,7 @@ public class BTCPClientCaller {
     }
 
 
-    public synchronized String[] getMasternodeList() throws WalletCallException, IOException, InterruptedException {
+    public synchronized String[][] getMasternodeList() throws WalletCallException, IOException, InterruptedException {
     
         JsonObject objResponse = this.executeCommandAndGetJsonObject("masternodelist", "full");
     
@@ -188,33 +188,71 @@ public class BTCPClientCaller {
             this.decomposeJSONValue(name, objResponse.get(name), map);
         }
     
-        String[] finalArr = new String[map.size()];
+        String[][] finalArr = new String[map.size()][];
         int arInc = 0;
         for(String memberName : map.keySet()){
             String[] splitResponse = String.valueOf(objResponse.get(memberName)).replace("\"","").split("\\s+");
-            String splitObject = "{" + memberName + ": [";
+            String splitObject = "[" + memberName + ", ";
             int inc = 0;
             for(String valueInString: splitResponse) {
                 if(valueInString.length() == 0){
                     // dont log the empty variable.
                 }else if(inc == 1){
                     splitObject+= valueInString;
+                    
                 }else{
                     splitObject+= ", " + valueInString;
+                    // finalArr[arInc][inc] = valueInString;
                 }
                 inc++;
             }
-            splitObject+= "]}";
-            finalArr[arInc] = splitObject;
+            splitObject+= "]";
+            // finalArr[arInc] = splitObject;
+            finalArr[arInc][0] = splitObject;
             arInc++;
         }
+        Log.info("---------------------------------------");
+        Log.info(finalArr[0][0]);
 
         return finalArr;
     }
 
-
-
     public synchronized String[][] getWalletPublicTransactions()
+        throws WalletCallException, IOException, InterruptedException {
+        String notListed = "\u26D4";
+
+        OS_TYPE os = OSUtil.getOSType();
+        if (os == OS_TYPE.WINDOWS) {
+            notListed = " \u25B6";
+        }
+
+        JsonArray jsonTransactions = executeCommandAndGetJsonArray(
+                "listtransactions", wrapStringParameter(""), "300");
+        String strTransactions[][] = new String[jsonTransactions.size()][];
+        for (int i = 0; i < jsonTransactions.size(); i++) {
+            strTransactions[i] = new String[7];
+            JsonObject trans = jsonTransactions.get(i).asObject();
+
+            // Needs to be the same as in getWalletZReceivedTransactions()
+            // TODO: some day refactor to use object containers
+            strTransactions[i][0] = "\u2606T (Public)";
+            strTransactions[i][1] = trans.getString("category", "ERROR!");
+            strTransactions[i][2] = trans.get("confirmations").toString();
+            strTransactions[i][3] = trans.get("amount").toString();
+            strTransactions[i][4] = trans.get("time").toString();
+            strTransactions[i][5] = trans.getString("address", notListed + " (Z Address not listed by wallet!)");
+            strTransactions[i][6] = trans.get("txid").toString();
+
+        }
+
+        return strTransactions;
+        }
+
+
+
+    
+    
+        public synchronized String[][] getWalletPub()
             throws WalletCallException, IOException, InterruptedException {
         String notListed = "\u26D4";
 

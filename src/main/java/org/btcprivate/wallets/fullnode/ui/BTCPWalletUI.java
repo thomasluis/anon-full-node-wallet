@@ -46,6 +46,7 @@ public class BTCPWalletUI extends JFrame {
     private AddressBookPanel addressBookPanel;
     private MessagingPanel messagingPanel;
     private MasternodePanel masternodePanel;
+    private TestPanel testPanel;
 
 
     private JMenuItem langEnglish;
@@ -153,6 +154,10 @@ public class BTCPWalletUI extends JFrame {
         tabs.addTab(LOCAL_MSG_TAB_MSTRNDE,
             new ImageIcon(cl.getResource(IMG_TAB_SEND)),
             masternodePanel = new MasternodePanel(clientCaller,tabs));
+        tabs.addTab(LOCAL_MSG_TAB_MSTRNDE,
+            new ImageIcon(cl.getResource(IMG_TAB_SEND)),
+            testPanel = new TestPanel(this, installationObserver, clientCaller,
+            errorReporter, backupTracker));
 
         contentPane.add(tabs);
 
